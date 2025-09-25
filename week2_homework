@@ -1,0 +1,38 @@
+import requests
+
+# --- Step 1: GET movies from IMDb ---
+print("=== GET Request to IMDb API ===")
+url_get = "https://api.imdbapi.dev/titles?types=MOVIE&year=2025"
+response_get = requests.get(url_get)
+
+if response_get.status_code == 200:
+    data = response_get.json()
+    titles = data.get("titles", [])
+
+    if titles:
+        movie = titles[:3]
+    else:
+        print("No movies found.")
+        exit()
+else:
+    print("Error:", response_get.status_code, response_get.text)
+    exit()
+
+    # --- Step 2: POST movie data to JSONPlaceholder ---
+print("\n=== POST Requests to JSONPlaceholder ===")
+url_post = "https://jsonplaceholder.typicode.com/posts"
+
+for movie in movie:
+    movie_title = movie.get("primaryTitle")
+    movie_year = movie.get("startYear")
+
+    payload = {
+        "title": movie_title,
+        "body": f"A movie released in {movie_year}",
+        "userId": 1
+    }
+
+    response_post = requests.post(url_post, json=payload)
+
+    print("Status Code:", response_post.status_code)
+    print("Response Body:", response_post.json())
